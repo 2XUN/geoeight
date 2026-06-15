@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>高中地理数字素养测评 | 澄海玩具产业转型探究</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body { font-family: 'Inter', sans-serif; background: #eef2f5; color: #1e2a3e; line-height: 1.5; }
+        .page { display: none; max-width: 1400px; margin: 0 auto; background: white; min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,0.05); animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+        .page-header { background: #2c3e50; color: white; padding: 20px 32px; border-bottom: 4px solid #e67e22; }
+        .page-header h1 { font-size: 1.8rem; font-weight: 600; }
+        .content-padding { padding: 32px; }
+        .card { background: #ffffff; border-radius: 24px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); padding: 24px; margin-bottom: 28px; border: 1px solid #e9edf2; }
+        .flex-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: start; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; }
+        .btn { border: none; border-radius: 40px; padding: 10px 24px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .btn-primary { background: #e67e22; color: white; }
+        .btn-primary:hover { background: #d35400; transform: translateY(-1px); }
+        .btn-secondary { background: #ecf0f1; color: #2c3e50; }
+        .btn-outline { background: transparent; border: 1px solid #e67e22; color: #e67e22; }
+        .btn-nav { background: #bdc3c7; color: #2c3e50; margin-right: 12px; }
+        .btn-nav:hover { background: #95a5a6; }
+        .tag { background: #f1f2f6; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; display: inline-block; margin: 4px; }
+        textarea, input[type="text"], select { width: 100%; padding: 12px 16px; border-radius: 16px; border: 1px solid #cfdde6; font-family: inherit; margin-top: 8px; font-size: 1rem; }
+        textarea:focus, input:focus { outline: none; border-color: #e67e22; box-shadow: 0 0 0 3px rgba(230,126,34,0.1); }
+        .info-badge { background: #fef5e8; border-left: 4px solid #e67e22; padding: 12px 18px; border-radius: 16px; margin: 20px 0; }
+        .map-workspace { display: flex; gap: 20px; flex-wrap: wrap; }
+        .map-area { flex: 2; background: #eef2e6; border-radius: 20px; border: 2px solid #aaa; position: relative; min-height: 280px; overflow: hidden; }
+        .map-area img { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none; }
+        .draggable-list { flex: 1; background: #f8f9fa; border-radius: 20px; padding: 16px; }
+        .drag-item { background: white; border-radius: 16px; padding: 8px 12px; margin: 8px 0; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #ddd; cursor: grab; touch-action: none; }
+        .drag-item:active { cursor: grabbing; }
+        .drag-item img { width: 50px; height: 50px; object-fit: contain; background: #f0f0f0; border-radius: 8px; pointer-events: none; }
+        .drag-clone { position: fixed; z-index: 9999; opacity: 0.7; pointer-events: none; transform: scale(0.8); filter: drop-shadow(0 0 5px rgba(0,0,0,0.3)); background: white; border-radius: 12px; padding: 4px 8px; display: flex; align-items: center; gap: 8px; }
+        .map-element-container { position: absolute; cursor: move; z-index: 10; background: transparent; }
+        .map-element-img { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 4px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); background: rgba(255,255,255,0.8); pointer-events: none; }
+        .resize-handle { position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: #e67e22; border-radius: 2px; cursor: nw-resize; z-index: 20; }
+        .schematic-map { background: #f9f7f0; border-radius: 20px; padding: 16px; text-align: center; border: 1px solid #e0d6b0; }
+        .schematic-map img { max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .search-result-item { background: #fff; border-radius: 16px; padding: 14px; margin-bottom: 14px; border-left: 4px solid #e67e22; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .search-result-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+        .search-result-meta { font-size: 0.8rem; color: #6c757d; margin-bottom: 8px; }
+        .search-result-snippet { font-size: 0.9rem; color: #2c3e50; background: #f8f9fa; padding: 8px; border-radius: 12px; margin: 8px 0; }
+        .mindmap-node { background: white; border-radius: 20px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.05); border-left: 4px solid #e67e22; }
+        .subnode-row { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+        .info-card { background: #e8f0fe; border-radius: 16px; padding: 12px; margin: 12px 0; }
+        .nav-buttons { margin-top: 24px; display: flex; justify-content: space-between; border-top: 1px solid #e9edf2; padding-top: 20px; }
+        .wechat-post { background: #fef9e6; border-radius: 24px; padding: 20px; margin-bottom: 20px; border: 1px solid #f1c40f; }
+        .wechat-post h4 { color: #e67e22; margin-bottom: 12px; }
+        .problem-item { margin: 16px 0; padding: 12px; background: #fff; border-radius: 16px; }
+        .measure-row { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+        .measure-row input, .measure-row textarea, .measure-row select { width: 100%; }
+        @media (max-width: 800px) { .content-padding { padding: 20px; } .grid-2 { grid-template-columns: 1fr; } .map-workspace { flex-direction: column; } }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+    // 全局数据
+    let studentData = {
+        base: { subject: '', grade: '', userId: Date.now() },
+        task1: { toolA: '', toolB: '', toolC: '', keywords: { A1: '', A2: '', B1: '', B2: '', C1: '', C2: '' }, selectedResults: [], reliableChoice: '', tagsA: [], tagsB: [], tagsC: [], verifyMethods: [], verifyConclusion: '' },
+        task2: { mapElements: [], missingElements: '', improvementSuggestions: '', mindmapNodes: [] },
+        task3: { subTasks: [], measures: [] },
+        task4: { collabTools: [], discussionReply: '' },
+        task5: { versionIssues: '', copyrightIssues: '', privacyIssues: '', otherIssues: '' }
+    };
+    let currentPage = 1;
+    let selectedResultsIds = [];
+
+    function showPage(pageNum) {
+        if (pageNum < 1 || pageNum > 8) return;
+        for (let i = 1; i <= 8; i++) {
+            const p = document.getElementById(`page${i}`);
+            if (p) p.classList.remove('active');
+        }
+        const target = document.getElementById(`page${pageNum}`);
+        if (target) target.classList.add('active');
+        currentPage = pageNum;
+        window.scrollTo(0, 0);
+    }
+
+    function collectBase() {
+        studentData.base.subject = document.getElementById('subjectCombo')?.value || '';
+        studentData.base.grade = document.getElementById('grade')?.value || '';
+    }
+
+    function buildReportText() {
+        let mapElementsText = '';
+        if (studentData.task2.mapElements && studentData.task2.mapElements.length) {
+            studentData.task2.mapElements.forEach((el, idx) => {
+                mapElementsText += `    ${idx+1}. ${el.name}  →  位置: (左=${el.left}, 上=${el.top})  尺寸: (宽=${el.width}, 高=${el.height})\n`;
+            });
+        } else {
+            mapElementsText = '    未放置任何图例要素\n';
+        }
+        return `
+╔══════════════════════════════════════════════════════════════════╗
+║              高中地理数字素养研学测评 完整报告                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+【学生信息】
+  编号: ${studentData.base.userId}
+  选科: ${studentData.base.subject}
+  年级: ${studentData.base.grade}
+  提交时间: ${new Date().toLocaleString()}
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 任务一：信息采集                                                  │
+├─────────────────────────────────────────────────────────────────┤
+  工具选择: 发展历程=${studentData.task1.toolA} 区位=${studentData.task1.toolB} 产业数据=${studentData.task1.toolC}
+  关键词: ${JSON.stringify(studentData.task1.keywords)}
+  筛选结果ID: ${studentData.task1.selectedResults.join(',')}
+  最可靠信息: ${studentData.task1.reliableChoice}
+  信息A标签: ${studentData.task1.tagsA.join(',')}
+  信息B标签: ${studentData.task1.tagsB.join(',')}
+  信息C标签: ${studentData.task1.tagsC.join(',')}
+  核验方式: ${studentData.task1.verifyMethods.join(',')}
+  核验结论: ${studentData.task1.verifyConclusion}
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 任务二：知识建构                                                  │
+├─────────────────────────────────────────────────────────────────┤
+  地图放置要素:
+${mapElementsText}
+  缺失要素建议: ${studentData.task2.missingElements}
+  改进建议: ${studentData.task2.improvementSuggestions}
+  思维导图结构: ${JSON.stringify(studentData.task2.mindmapNodes)}
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 任务三：问题诊断                                                  │
+├─────────────────────────────────────────────────────────────────┤
+  子任务拆解: ${JSON.stringify(studentData.task3.subTasks)}
+  转型措施: ${JSON.stringify(studentData.task3.measures)}
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 任务四：交流协作                                                  │
+├─────────────────────────────────────────────────────────────────┤
+  协作工具: ${studentData.task4.collabTools.join(',')}
+  讨论回复: ${studentData.task4.discussionReply}
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 任务五：规范发布                                                  │
+├─────────────────────────────────────────────────────────────────┤
+  版图问题: ${studentData.task5.versionIssues}
+  版权问题: ${studentData.task5.copyrightIssues}
+  隐私问题: ${studentData.task5.privacyIssues}
+  安全问题: ${studentData.task5.otherIssues}
+
+═══════════════════════════════════════════════════════════════════
+`;
+    }
+
+    function submitToFormSubmit() {
+        collectTask1Final();
+        collectTask2Final();
+        collectTask3Final();
+        collectTask4Final();
+        collectTask5Final();
+        const reportText = buildReportText();
+        const formData = new FormData();
+        formData.append('email', '2399538637@qq.com');
+        formData.append('subject', '高中地理数字素养测评结果');
+        formData.append('message', reportText);
+        formData.append('_replyto', '2399538637@qq.com');
+        formData.append('_captcha', 'false');
+        fetch('https://formsubmit.co/ajax/2399538637@qq.com', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('✅ 提交成功！结果已发送至老师邮箱。');
+                showPage(8);
+            } else {
+                alert('❌ 提交失败，请稍后重试。');
+            }
+        })
+        .catch(err => {
+            alert('❌ 网络错误，请检查连接。错误：' + err.message);
+        });
+    }
+
+    function collectTask1Final() {
+        studentData.task1.toolA = document.getElementById('toolA')?.value || '';
+        studentData.task1.toolB = document.getElementById('toolB')?.value || '';
+        studentData.task1.toolC = document.getElementById('toolC')?.value || '';
+        studentData.task1.keywords = { 
+            A1: document.getElementById('keyA1')?.value, A2: document.getElementById('keyA2')?.value,
+            B1: document.getElementById('keyB1')?.value, B2: document.getElementById('keyB2')?.value,
+            C1: document.getElementById('keyC1')?.value, C2: document.getElementById('keyC2')?.value 
+        };
+        studentData.task1.selectedResults = selectedResultsIds;
+        studentData.task1.reliableChoice = document.querySelector('input[name="reliableChoice"]:checked')?.value || '';
+        studentData.task1.tagsA = Array.from(document.querySelectorAll('.tagA:checked')).map(cb=>cb.value);
+        studentData.task1.tagsB = Array.from(document.querySelectorAll('.tagB:checked')).map(cb=>cb.value);
+        studentData.task1.tagsC = Array.from(document.querySelectorAll('.tagC:checked')).map(cb=>cb.value);
+        studentData.task1.verifyMethods = Array.from(document.querySelectorAll('.verifyMethod:checked')).map(cb=>cb.value);
+        studentData.task1.verifyConclusion = document.getElementById('verifyConclusion')?.value;
+    }
+    function collectTask2Final() {
+        const elements = [];
+        document.querySelectorAll('.map-element-container').forEach(el => {
+            const name = el.getAttribute('data-name') || '图例要素';
+            const left = el.style.left;
+            const top = el.style.top;
+            const width = el.style.width;
+            const height = el.style.height;
+            elements.push({ name: name, left: left, top: top, width: width, height: height });
+        });
+        studentData.task2.mapElements = elements;
+        studentData.task2.missingElements = document.getElementById('missingElements')?.value || '';
+        studentData.task2.improvementSuggestions = document.getElementById('improvementSuggestions')?.value || '';
+        const mindNodes = [];
+        document.querySelectorAll('.mindmap-node').forEach((node, idx) => {
+            const branchName = node.querySelector('.branchName')?.value;
+            const sub1 = node.querySelector('.subnode1')?.value;
+            const sub2 = node.querySelector('.subnode2')?.value;
+            mindNodes.push({ branch: branchName, subNodes: [sub1, sub2] });
+        });
+        studentData.task2.mindmapNodes = mindNodes;
+    }
+    function collectTask3Final() {
+        studentData.task3.subTasks = [
+            {desc: document.getElementById('subDesc1')?.value, tool: document.getElementById('subTool1')?.value, data: document.getElementById('subData1')?.value},
+            {desc: document.getElementById('subDesc2')?.value, tool: document.getElementById('subTool2')?.value, data: document.getElementById('subData2')?.value}
+        ];
+        let measures = [];
+        for(let i=1; i<=2; i++) {
+            const text = document.getElementById(`measureText${i}`)?.value;
+            if(text) measures.push({text, tech: document.getElementById(`measureTech${i}`)?.value, feas: document.getElementById(`measureFea${i}`)?.value});
+        }
+        studentData.task3.measures = measures;
+    }
+    function collectTask4Final() {
+        studentData.task4.collabTools = [
+            `${document.getElementById('tool1Name')?.value}:${document.getElementById('tool1Use')?.value}`,
+            `${document.getElementById('tool2Name')?.value}:${document.getElementById('tool2Use')?.value}`
+        ];
+        studentData.task4.discussionReply = document.getElementById('discussReply')?.value;
+    }
+    function collectTask5Final() {
+        studentData.task5.versionIssues = document.getElementById('versionIssues')?.value || '';
+        studentData.task5.copyrightIssues = document.getElementById('copyrightIssues')?.value || '';
+        studentData.task5.privacyIssues = document.getElementById('privacyIssues')?.value || '';
+        studentData.task5.otherIssues = document.getElementById('otherIssues')?.value || '';
+    }
+
+    function buildAllPages() {
+        const app = document.getElementById('app');
+        app.innerHTML = '';
+
+        // 页面1
+        const p1 = document.createElement('div'); p1.id = 'page1'; p1.className = 'page active';
+        p1.innerHTML = `<div class="page-header"><h1>🌍 高中地理数字素养测评</h1><p>澄海玩具产业转型升级 · 数字化探究工作坊</p></div>
+        <div class="content-padding"><div class="card"><p>同学你好！本次测评旨在了解高中生运用数字工具开展地理探究的能力水平，作答结果仅用于教学研究，不纳入日常学业考核，所有个人信息与作答内容严格保密。测评全程约 25 分钟，共包含 5 项研学任务，请你独立完成，真实呈现你的操作思路。</p>
+        <div style="background:#f0f7ff; padding:20px; border-radius:24px;"><h3>📋 基础信息</h3><div class="flex-row" style="gap:30px;"><div><label>选科组合：</label><br><select id="subjectCombo" style="padding:12px;"><option>史政地</option><option>史生地</option><option>物化地</option><option>物生地</option></select></div><div><label>年级：</label><br><select id="grade" style="padding:12px;"><option>高一</option><option>高二</option><option>高三</option></select></div></div></div>
+        <div style="margin-top:30px; text-align:center;"><button id="toPage2Btn" class="btn btn-primary">✅ 我已阅读并同意，开始测评</button></div></div></div>`;
+        app.appendChild(p1);
+
+        // 页面2 情境导入
+        const p2 = document.createElement('div'); p2.id = 'page2'; p2.className = 'page';
+        p2.innerHTML = `<div class="page-header"><h1>📖 情境导入 · 研学任务总览</h1></div>
+        <div class="content-padding"><div class="flex-row"><div class="card" style="flex:1.5"><h3><i class="fas fa-map-marker-alt"></i> 澄海区背景</h3><p>汕头市澄海区地处韩江三角洲、濒临南海，是国内知名 “中国玩具礼品之都”。当地玩具产业起步于家庭作坊，产业链完整，如今面临企业布局分散、自主品牌缺失、产品附加值偏低等问题，目前正全力推进数字化、品牌化转型升级。本次研学围绕【澄海玩具产业转型升级区位分析】展开数字化探究，共5大任务。</p>
+        <div class="schematic-map"><strong>📌 汕头市澄海区位置图</strong><br><img src="image.png" alt="汕头市澄海区位置图" style="max-width:100%; height:auto; border-radius:12px;" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 300%22%3E%3Crect width=%22400%22 height=%22300%22 fill=%22%23f0f0f0%22/%3E%3Ctext x=%22200%22 y=%22150%22 text-anchor=%22middle%22 fill=%22%23999%22%3E图片未找到：请将“image.png”放在同一目录%3C/text%3E%3C/svg%3E';"><p class="tag">上图展示了汕头市与澄海区的相对位置、图例及比例尺</p></div></div>
+        <div class="card" style="flex:1"><h3>🎯 研学任务总览</h3><ul style="margin-left:20px; line-height:1.8;"><li>📡 任务一：信息采集</li><li>🗺️ 任务二：知识建构</li><li>⚙️ 任务三：问题诊断与转型方案</li><li>💬 任务四：交流研讨</li><li>🛡️ 任务五：规范发布</li></ul><button id="toPage3Btn" class="btn btn-primary" style="margin-top:24px;">🚀 开始研学</button></div></div>
+        <div class="nav-buttons"><button class="btn btn-nav" disabled style="opacity:0.5;">← 上一页</button><div></div></div></div>`;
+        app.appendChild(p2);
+
+        // 页面3 任务一
+        const p3 = document.createElement('div'); p3.id = 'page3'; p3.className = 'page';
+        p3.innerHTML = `<div class="page-header"><h1>📡 任务一：信息采集 · 地理信息检索与核验</h1></div>
+        <div class="content-padding">
+            <div class="card"><h3>🔍 1.1 定向信息检索</h3><p><strong>研学小组需要查找以下三类数据：</strong><br>• 澄海玩具产业的发展历程与关键节点<br>• 区位条件（交通、劳动力、政策、产业配套等）<br>• 产业规模数据（产值、企业数量、品牌发展）<br>请为这三类数据找最适合的检索工具</p>
+            <div class="grid-2">
+                <div><label>① 发展历程最合适的检索工具：</label><select id="toolA" style="padding:12px;"><option value="">请选择</option><option>通用搜索引擎（百度 / 搜狗）</option><option>电子地图平台（百度地图 / 高德地图）</option><option>地方政府官网</option><option>统计年鉴 / 政务公开平台</option><option>行业资讯平台</option></select><label>输入关键词：</label><input id="keyA1" placeholder="请输入检索关键词" style="padding:12px;"></div>
+                <div><label>② 区位条件最合适的检索工具：</label><select id="toolB" style="padding:12px;"><option value="">请选择</option><option>通用搜索引擎（百度 / 搜狗）</option><option>电子地图平台（百度地图 / 高德地图）</option><option>地方政府官网</option><option>统计年鉴 / 政务公开平台</option><option>行业资讯平台</option></select><label>输入关键词：</label><input id="keyB1" placeholder="请输入检索关键词" style="padding:12px;"></div>
+                <div><label>③ 产业规模数据最合适的检索工具：</label><select id="toolC" style="padding:12px;"><option value="">请选择</option><option>通用搜索引擎（百度 / 搜狗）</option><option>电子地图平台（百度地图 / 高德地图）</option><option>地方政府官网</option><option>统计年鉴 / 政务公开平台</option><option>行业资讯平台</option></select><label>输入关键词：</label><input id="keyC1" placeholder="请输入检索关键词" style="padding:12px;"></div>
+            </div>
+            <div class="info-badge">💡 检索策略提示：优先使用官方数据源，交叉验证，注意时效性。</div>
+            <button id="simulateSearchBtn" class="btn btn-secondary">🔎 模拟检索，查看结果</button>
+            <div id="searchResultsArea" style="margin-top:20px;"></div></div>
+            <div class="card"><h3>🔎 1.2 多源信息核验</h3>
+            <p><strong>信息A：</strong>社交媒体2026年视频：“澄海玩具产业已经不行了，工厂都搬到东南亚去了。”<br>
+            <strong>信息B：</strong>2025年2月澄海区政府发布：2024年规上工业产值140.91亿元，同比增长5.2%。<br>
+            <strong>信息C：</strong>AI生成：“澄海玩具产业20世纪90年代起步，主要出口欧美，疫情后大部分停产。”</p>
+            <div><label>三条信息中可信度最高的是（单选）：</label><br><label><input type="radio" name="reliableChoice" value="信息A"> 信息A</label> <label><input type="radio" name="reliableChoice" value="信息B"> 信息B</label> <label><input type="radio" name="reliableChoice" value="信息C"> 信息C</label></div>
+            <p><strong>勾选每条信息对应的特征（可多选）：</strong></p>
+            <div class="grid-2">
+                <div><strong>信息A</strong><br><label><input type="checkbox" class="tagA" value="个人无实证信源"> 个人无实证信源</label><br><label><input type="checkbox" class="tagA" value="表述无事实依据"> 表述无事实依据</label><br><label><input type="checkbox" class="tagA" value="内容情绪化"> 内容情绪化</label><br><label><input type="checkbox" class="tagA" value="缺少具体数据"> 缺少具体数据</label></div>
+                <div><strong>信息B</strong><br><label><input type="checkbox" class="tagB" value="官方权威来源"> 官方权威来源</label><br><label><input type="checkbox" class="tagB" value="有具体数据支撑"> 有具体数据支撑</label><br><label><input type="checkbox" class="tagB" value="表述客观严谨"> 表述客观严谨</label><br><label><input type="checkbox" class="tagB" value="时效性良好"> 时效性良好</label></div>
+                <div><strong>信息C</strong><br><label><input type="checkbox" class="tagC" value="AI生成无权威依据"> AI生成无权威依据</label><br><label><input type="checkbox" class="tagC" value="存在事实错误"> 存在事实错误</label><br><label><input type="checkbox" class="tagC" value="无数据支撑"> 无数据支撑</label><br><label><input type="checkbox" class="tagC" value="与官方信息矛盾"> 与官方信息矛盾</label></div>
+            </div>
+            <div><label>若要核验以上信息真伪，可采取的方式（可多选）：</label><br><label><input type="checkbox" class="verifyMethod" value="查阅政府统计公报"> 查阅政府统计公报</label> <label><input type="checkbox" class="verifyMethod" value="检索权威产业新闻"> 检索权威产业新闻</label> <label><input type="checkbox" class="verifyMethod" value="对比行业报告"> 对比行业报告</label> <label><input type="checkbox" class="verifyMethod" value="咨询业内人员"> 咨询业内人员</label></div>
+            <div><label>请用1句话总结本次信息核验的结论：</label><textarea id="verifyConclusion" rows="3" placeholder="例：信息B最可信" style="padding:12px;"></textarea></div>
+            <button id="completeTask1Btn" class="btn btn-primary" style="margin-top:15px;">完成信息采集，进入下一任务</button></div>
+            <div class="nav-buttons"><button id="backToPage2" class="btn btn-nav">← 上一页</button><div></div></div>
+        </div>`;
+        app.appendChild(p3);
+
+        // 模拟检索数据
+        const mockResults = [
+            { id: 1, title: "澄海区统计局：2024年玩具产业产值548亿元，同比增长7%", source: "政府官网", date: "2025-02-20", type: "产业数据", snippet: "据澄海区统计局最新数据，2024年全区玩具创意产业实现工业总产值548亿元，同比增长7.2%..." },
+            { id: 2, title: "南方日报：澄海玩具40年——从家庭作坊到千亿集群", source: "正规媒体", date: "2024-11-15", type: "发展历程", snippet: "1980年代，澄海莲下镇出现第一批家庭作坊；1990年代形成“一镇一品”格局..." },
+            { id: 3, title: "澄海区政府：〈玩具创意产业高质量发展规划（2023-2030年）〉", source: "政府官网", date: "2023-08-10", type: "政策区位", snippet: "规划到2030年建成千亿级产业集群，重点发展“玩具+大文创”“玩具+大智能”..." }
+        ];
+        document.getElementById('simulateSearchBtn')?.addEventListener('click', () => {
+            let html = `<h4>📄 模拟检索结果（请勾选有效信息）</h4>`;
+            mockResults.forEach(r => {
+                html += `<div class="search-result-item"><label><input type="checkbox" class="resultCheck" value="${r.id}"> <strong>${r.title}</strong></label><div class="search-result-meta">来源：${r.source} | ${r.date}</div><div class="search-result-snippet">${r.snippet}</div></div>`;
+            });
+            document.getElementById('searchResultsArea').innerHTML = html;
+            document.querySelectorAll('.resultCheck').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    if(e.target.checked) { if(!selectedResultsIds.includes(val)) selectedResultsIds.push(val); }
+                    else { selectedResultsIds = selectedResultsIds.filter(v => v !== val); }
+                });
+            });
+        });
+
+        // 页面4 任务二
+        const p4 = document.createElement('div'); p4.id = 'page4'; p4.className = 'page';
+        p4.innerHTML = `<div class="page-header"><h1>🗺️ 任务二：知识建构</h1></div>
+        <div class="content-padding"><div class="card"><h3>2.1 制作澄海玩具产业空间分布图</h3><p>操作说明：将右侧图例、指北针、比例尺拖拽至左侧地图对应位置，完成专题地图绘制。</p>
+        <div class="map-workspace"><div class="map-area" id="mapArea"><img id="baseMapImg" src="one.png" alt="地图底图"><div id="mapDropzone" style="position:absolute; top:0; left:0; width:100%; height:100%;"></div></div>
+        <div class="draggable-list"><h4>📦 可拖拽的图例要素</h4>
+            <div class="drag-item" data-img-src="two.png" data-name="指北针"><img src="two.png" alt="指北针"> 指北针</div>
+            <div class="drag-item" data-img-src="three.png" data-name="比例尺"><img src="three.png" alt="比例尺"> 比例尺</div>
+            <div class="drag-item" data-img-src="four.png" data-name="图例"><img src="four.png" alt="图例"> 图例</div>
+            <div style="margin-top:20px;"><label>🔍 按照地图绘制规范，这张专题地图还缺少哪些必备地理要素？</label><input type="text" id="missingElements" placeholder="请填写" style="padding:12px;"></div>
+            <div style="margin-top:12px;"><label>💡 说说这张简易地图在表达产业空间分布上有哪些不足、该如何改进？</label><input type="text" id="improvementSuggestions" placeholder="请填写" style="padding:12px;"></div>
+        </div></div>
+        <button id="saveMapBtn" class="btn btn-secondary" style="margin-top:16px;">保存地图标注记录</button></div>
+        <div class="card"><h3>2.2 请以「澄海玩具产业发展」为中心绘制知识网络</h3><p>要求：设置2个一级分支，每个一级分支下设2个二级节点，梳理要素间逻辑关系。</p>
+        <div id="mindmapContainer"></div><button id="addBranchBtn" class="btn btn-outline">+ 添加一级分支</button><button id="saveMindmapBtn" class="btn btn-primary">保存思维导图</button></div>
+        <div class="nav-buttons"><button id="backToPage3" class="btn btn-nav">← 上一页</button><button id="toTask3Btn" class="btn btn-primary">完成知识建构，进入任务三</button></div></div>`;
+        app.appendChild(p4);
+
+        // 拖拽逻辑（支持鼠标和触摸）
+        function initCustomDrag() {
+            const dragItems = document.querySelectorAll('.drag-item');
+            const dropzone = document.getElementById('mapDropzone');
+            if (!dropzone) return;
+            let activeDrag = null;
+            let clone = null;
+            let startX = 0, startY = 0;
+            let isDragging = false;
+
+            function onDragStart(e, item) {
+                e.preventDefault();
+                let clientX, clientY;
+                if (e.type === 'mousedown') {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                    window.addEventListener('mousemove', onDragMove);
+                    window.addEventListener('mouseup', onDragEnd);
+                } else {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                    window.addEventListener('touchmove', onDragMove);
+                    window.addEventListener('touchend', onDragEnd);
+                }
+                startX = clientX;
+                startY = clientY;
+                activeDrag = item;
+                const imgSrc = activeDrag.getAttribute('data-img-src');
+                const name = activeDrag.getAttribute('data-name');
+                clone = document.createElement('div');
+                clone.className = 'drag-clone';
+                clone.innerHTML = `<img src="${imgSrc}" style="width:40px; height:40px;"> ${name}`;
+                clone.style.left = clientX - 30 + 'px';
+                clone.style.top = clientY - 20 + 'px';
+                document.body.appendChild(clone);
+                isDragging = true;
+            }
+
+            function onDragMove(e) {
+                if (!isDragging || !clone) return;
+                let clientX, clientY;
+                if (e.type === 'mousemove') {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                } else {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                }
+                clone.style.left = clientX - 30 + 'px';
+                clone.style.top = clientY - 20 + 'px';
+            }
+
+            function onDragEnd(e) {
+                if (!isDragging || !activeDrag) return;
+                let clientX, clientY;
+                if (e.type === 'mouseup') {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                    window.removeEventListener('mousemove', onDragMove);
+                    window.removeEventListener('mouseup', onDragEnd);
+                } else {
+                    if (e.changedTouches && e.changedTouches.length) {
+                        clientX = e.changedTouches[0].clientX;
+                        clientY = e.changedTouches[0].clientY;
+                    } else {
+                        clientX = startX;
+                        clientY = startY;
+                    }
+                    window.removeEventListener('touchmove', onDragMove);
+                    window.removeEventListener('touchend', onDragEnd);
+                }
+                if (clone) clone.remove();
+                const dropRect = dropzone.getBoundingClientRect();
+                if (clientX >= dropRect.left && clientX <= dropRect.right && clientY >= dropRect.top && clientY <= dropRect.bottom) {
+                    const relX = clientX - dropRect.left;
+                    const relY = clientY - dropRect.top;
+                    const imgSrc = activeDrag.getAttribute('data-img-src');
+                    const name = activeDrag.getAttribute('data-name');
+                    createResizableImage(imgSrc, name, relX - 30, relY - 20, dropzone);
+                }
+                activeDrag = null;
+                clone = null;
+                isDragging = false;
+            }
+
+            dragItems.forEach(item => {
+                item.addEventListener('mousedown', (e) => onDragStart(e, item));
+                item.addEventListener('touchstart', (e) => { e.preventDefault(); onDragStart(e, item); });
+            });
+        }
+
+        function createResizableImage(src, name, left, top, container) {
+            const containerDiv = document.createElement('div');
+            containerDiv.className = 'map-element-container';
+            containerDiv.setAttribute('data-name', name);
+            containerDiv.style.position = 'absolute';
+            containerDiv.style.left = left + 'px';
+            containerDiv.style.top = top + 'px';
+            containerDiv.style.width = '60px';
+            containerDiv.style.height = '60px';
+            containerDiv.style.cursor = 'move';
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = name;
+            img.className = 'map-element-img';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.pointerEvents = 'none';
+            containerDiv.appendChild(img);
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'resize-handle';
+            containerDiv.appendChild(resizeHandle);
+            container.appendChild(containerDiv);
+            makeDraggable(containerDiv);
+            makeResizable(containerDiv, resizeHandle);
+        }
+
+        function makeDraggable(el) {
+            let startX, startY, offsetX, offsetY;
+            el.addEventListener('mousedown', (e) => {
+                if (e.target.classList && e.target.classList.contains('resize-handle')) return;
+                e.stopPropagation();
+                startX = e.clientX;
+                startY = e.clientY;
+                offsetX = parseFloat(el.style.left);
+                offsetY = parseFloat(el.style.top);
+                document.onmousemove = (me) => {
+                    let dx = me.clientX - startX;
+                    let dy = me.clientY - startY;
+                    el.style.left = (offsetX + dx) + 'px';
+                    el.style.top = (offsetY + dy) + 'px';
+                };
+                document.onmouseup = () => { document.onmousemove = null; };
+            });
+            el.addEventListener('touchstart', (e) => {
+                if (e.target.classList && e.target.classList.contains('resize-handle')) return;
+                e.stopPropagation();
+                const touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                offsetX = parseFloat(el.style.left);
+                offsetY = parseFloat(el.style.top);
+                const onTouchMove = (me) => {
+                    const touchMove = me.touches[0];
+                    let dx = touchMove.clientX - startX;
+                    let dy = touchMove.clientY - startY;
+                    el.style.left = (offsetX + dx) + 'px';
+                    el.style.top = (offsetY + dy) + 'px';
+                };
+                const onTouchEnd = () => {
+                    document.removeEventListener('touchmove', onTouchMove);
+                    document.removeEventListener('touchend', onTouchEnd);
+                };
+                document.addEventListener('touchmove', onTouchMove);
+                document.addEventListener('touchend', onTouchEnd);
+            });
+        }
+
+        function makeResizable(container, handle) {
+            let startX, startY, startW, startH;
+            handle.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                startX = e.clientX;
+                startY = e.clientY;
+                startW = container.offsetWidth;
+                startH = container.offsetHeight;
+                document.onmousemove = (me) => {
+                    let dx = me.clientX - startX;
+                    let dy = me.clientY - startY;
+                    let newW = Math.min(150, Math.max(40, startW + dx));
+                    let newH = Math.min(150, Math.max(40, startH + dy));
+                    container.style.width = newW + 'px';
+                    container.style.height = newH + 'px';
+                };
+                document.onmouseup = () => { document.onmousemove = null; };
+            });
+            handle.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+                const touch = e.touches[0];
+                startX = touch.clientX;
+                startY = touch.clientY;
+                startW = container.offsetWidth;
+                startH = container.offsetHeight;
+                const onTouchMove = (me) => {
+                    const touchMove = me.touches[0];
+                    let dx = touchMove.clientX - startX;
+                    let dy = touchMove.clientY - startY;
+                    let newW = Math.min(150, Math.max(40, startW + dx));
+                    let newH = Math.min(150, Math.max(40, startH + dy));
+                    container.style.width = newW + 'px';
+                    container.style.height = newH + 'px';
+                };
+                const onTouchEnd = () => {
+                    document.removeEventListener('touchmove', onTouchMove);
+                    document.removeEventListener('touchend', onTouchEnd);
+                };
+                document.addEventListener('touchmove', onTouchMove);
+                document.addEventListener('touchend', onTouchEnd);
+            });
+        }
+
+        // ========== 页面5 任务三 ==========
+        const p5 = document.createElement('div'); p5.id = 'page5'; p5.className = 'page';
+        p5.innerHTML = `<div class="page-header"><h1>⚙️ 任务三：问题诊断与转型方案</h1></div>
+        <div class="content-padding"><div class="card"><h3>3.1 问题数字化拆解</h3><p><strong>核心问题：澄海玩具产业自主品牌薄弱、以贴牌生产为主，产品附加值低，市场竞争力不足。</strong>请围绕上述核心问题，设计2项可通过数字工具完成的探究子任务，并填写对应内容。</p>
+        <div class="measure-row"><label>子任务 1 描述：</label><input id="subDesc1" placeholder="例：对比澄海与义乌玩具企业品牌占比" style="padding:12px;"><label>选用数字工具：</label><select id="subTool1" style="padding:12px;"><option value="">请选择</option><option>电子地图</option><option>搜索引擎</option><option>在线表格</option><option>统计数据平台</option><option>PPT / 思维导图工具</option><option>GIS简易工具</option></select><label>所需支撑数据：</label><input id="subData1" placeholder="例：品牌注册量、利润率对比" style="padding:12px;"></div>
+        <div class="measure-row"><label>子任务 2 描述：</label><input id="subDesc2" placeholder="请输入" style="padding:12px;"><label>选用数字工具：</label><select id="subTool2" style="padding:12px;"><option value="">请选择</option><option>电子地图</option><option>搜索引擎</option><option>在线表格</option><option>统计数据平台</option><option>PPT / 思维导图工具</option><option>GIS简易工具</option></select><label>所需支撑数据：</label><input id="subData2" placeholder="请输入" style="padding:12px;"></div>
+        <button id="saveSubtaskBtn" class="btn btn-secondary">提交拆解结果</button></div>
+        <div class="card"><h3>3.2 数字化转型创新方案</h3><p>为解决核心问题实现转型升级，请你设计2条具体措施。</p>
+        <div id="measuresList">
+            <div class="measure-row">
+                <label><strong>措施1：</strong></label>
+                <input placeholder="措施内容（例：搭建线上设计平台，打造原创品牌）" id="measureText1" style="padding:12px;">
+                <input placeholder="数字技术/工具（例：线上协作平台、短视频平台）" id="measureTech1" style="padding:12px;">
+                <textarea placeholder="可行性分析（例：产业基础好，平台门槛低）" id="measureFea1" rows="2" style="padding:12px;"></textarea>
+            </div>
+            <div class="measure-row">
+                <label><strong>措施2：</strong></label>
+                <input placeholder="措施内容" id="measureText2" style="padding:12px;">
+                <input placeholder="数字技术/工具" id="measureTech2" style="padding:12px;">
+                <textarea placeholder="可行性分析" id="measureFea2" rows="2" style="padding:12px;"></textarea>
+            </div>
+        </div>
+        <button id="saveMeasuresBtn" class="btn btn-primary">提交方案</button></div>
+        <div class="nav-buttons"><button id="backToPage4" class="btn btn-nav">← 上一页</button><button id="toTask4Btn" class="btn btn-primary">完成问题诊断，进入任务四</button></div></div>`;
+        app.appendChild(p5);
+
+        // ========== 页面6 任务四 ==========
+        const p6 = document.createElement('div'); p6.id = 'page6'; p6.className = 'page';
+        p6.innerHTML = `<div class="page-header"><h1>💬 任务四：交流研讨</h1></div>
+        <div class="content-padding"><div class="card"><h3>4.1 在线协作工具推荐</h3><p>小组分为三个探究主题：交通与市场、劳动力与政策、产业配套与创新。请推荐2款常用在线协作工具，并分别说明在本次地理探究中的具体用途。</p>
+        <div><label>工具1：</label><input id="tool1Name" placeholder="例：腾讯文档" style="padding:12px;"> <label>具体用途：</label><input id="tool1Use" placeholder="例：协同整理数据" style="padding:12px;"></div>
+        <div><label>工具2：</label><input id="tool2Name" placeholder="请输入" style="padding:12px;"> <label>具体用途：</label><input id="tool2Use" placeholder="请输入" style="padding:12px;"></div>
+        <h3>📢 证据化线上讨论</h3><p><strong>有同学提出观点：交通条件是澄海玩具产业发展的唯一核心因素。</strong>请结合下方参考证据，有理有据反驳该观点。</p>
+        <div class="info-card"><strong>📊 参考证据：</strong><br>① 地图显示玩具企业多沿沈海高速分布，但部分远离高速的镇街同样出现产业集聚；<br>② 2020-2025 年当地劳动力成本年均上涨 4%，但玩具产业仍稳定发展；<br>③ 地方出台 “玩具 + 大智能” 规划，为产业提供资金与政策扶持；<br>④ 本地拥有模具、注塑、包装等完整配套产业链，大幅降低生产交易成本。</div>
+        <label>你的论述：</label><textarea id="discussReply" rows="5" placeholder="" style="padding:12px;"></textarea>
+        <button id="saveCollabBtn" class="btn btn-secondary">保存协作成果</button></div>
+        <div class="nav-buttons"><button id="backToPage5" class="btn btn-nav">← 上一页</button><button id="toTask5Btn" class="btn btn-primary">完成协作研讨，进入任务五</button></div></div>`;
+        app.appendChild(p6);
+
+        // 页面7 任务五
+        const p7 = document.createElement('div'); p7.id = 'page7'; p7.className = 'page';
+        p7.innerHTML = `<div class="page-header"><h1>🛡️ 任务五：规范发布 · 推文安全审查</h1></div>
+        <div class="content-padding"><div class="wechat-post"><h4>📱 研学小组成果发布 · 微信公众号推文</h4><h2>澄海玩具产业转型升级的区位分析——研学小组成果发布</h2><p>近期，我们研学小组利用数字工具对澄海玩具产业进行了深入调研。下面分享主要发现。</p><p><strong>一、区位优势</strong><br>澄海区位于韩江三角洲，濒临南海，沈海高速和厦深铁路汕头站紧邻该区，交通便利。我们使用Bigemap下载了澄海区地图，并标注了主要交通线路（地图审图号：粤S〔2021〕016号）。需要完整地图可后台私信我们获取原文件。</p><p><strong>二、产业现状</strong><br>据《2024年汕头统计年鉴》，2024年澄海玩具创意产业规上工业产值140.91亿元，同比增长5.2%。我们也在百度文库上找到一份《澄海玩具企业名录》，从中筛选了部分数据进行分析。</p><p><strong>三、存在问题与建议</strong><br>调研中我们拍摄了几家玩具工厂的生产车间照片（其中有员工面部）。一位受访的车间主任表示：“目前高端设计人才缺口大，希望政府加强引进。”<br>我们建议：利用GIS叠加分析交通与产业园区数据，优化产业布局。具体GIS分析结果可加入我们的研学微信群（群号：CH2026）获取。</p><p>——**中学高一(*)班研学小组</p></div>
+        <div class="card"><h3>🔍 推文合规审查任务</h3><p>研学小组撰写了公众号推文，请结合<strong>国家版图规范、知识产权、个人隐私、信息传播安全</strong>四大要求，审查推文漏洞，写出问题 + 整改方式。</p>
+        <div class="problem-item"><label>1️⃣ 国家版图规范方面存在的问题及改正建议：</label><textarea id="versionIssues" rows="3" placeholder="请指出问题并提出改正建议" style="padding:12px;"></textarea></div>
+        <div class="problem-item"><label>2️⃣ 知识产权方面存在的问题及改正建议：</label><textarea id="copyrightIssues" rows="3" placeholder="请指出问题并提出改正建议" style="padding:12px;"></textarea></div>
+        <div class="problem-item"><label>3️⃣ 个人隐私方面存在的问题及改正建议：</label><textarea id="privacyIssues" rows="3" placeholder="请指出问题并提出改正建议" style="padding:12px;"></textarea></div>
+        <div class="problem-item"><label>4️⃣ 信息传播安全方面存在的问题及改正建议：</label><textarea id="otherIssues" rows="3" placeholder="请指出问题并提出改正建议" style="padding:12px;"></textarea></div>
+        <button id="submitAllFinalBtn" class="btn btn-primary" style="margin-top:20px;">✅ 确认合规分析，提交测评</button></div>
+        <div class="nav-buttons"><button id="backToPage6" class="btn btn-nav">← 上一页</button><div></div></div></div>`;
+        app.appendChild(p7);
+
+        // 页面8 结束
+        const p8 = document.createElement('div'); p8.id = 'page8'; p8.className = 'page';
+        p8.innerHTML = `<div class="page-header"><h1>🎉 恭喜你完成本次地理数字化研学测评！</h1></div><div class="content-padding"><div class="card" style="text-align:center;"><p>你的完整探究过程已记录，感谢参与。</p><button id="exitBtn" class="btn btn-secondary">退出测评</button></div><div class="nav-buttons"><button id="backToPage7" class="btn btn-nav">← 上一页</button><div></div></div></div>`;
+        app.appendChild(p8);
+
+        // 事件绑定
+        document.getElementById('toPage2Btn')?.addEventListener('click', () => { collectBase(); showPage(2); });
+        document.getElementById('toPage3Btn')?.addEventListener('click', () => showPage(3));
+        document.getElementById('completeTask1Btn')?.addEventListener('click', () => { collectTask1Final(); showPage(4); });
+        document.getElementById('toTask3Btn')?.addEventListener('click', () => { collectTask2Final(); showPage(5); });
+        document.getElementById('toTask4Btn')?.addEventListener('click', () => { collectTask3Final(); showPage(6); });
+        document.getElementById('toTask5Btn')?.addEventListener('click', () => { collectTask4Final(); showPage(7); });
+        document.getElementById('submitAllFinalBtn')?.addEventListener('click', () => { submitToFormSubmit(); });
+        document.getElementById('exitBtn')?.addEventListener('click', () => alert('感谢参与！'));
+        document.getElementById('saveMapBtn')?.addEventListener('click', () => alert('地图标注已记录'));
+        document.getElementById('saveMindmapBtn')?.addEventListener('click', () => alert('思维导图已保存'));
+        document.getElementById('saveSubtaskBtn')?.addEventListener('click', () => alert('子任务已保存'));
+        document.getElementById('saveMeasuresBtn')?.addEventListener('click', () => alert('方案已保存'));
+        document.getElementById('saveCollabBtn')?.addEventListener('click', () => alert('协作成果已保存'));
+        const backBtns = ['backToPage2','backToPage3','backToPage4','backToPage5','backToPage6','backToPage7'];
+        backBtns.forEach((id, idx) => { document.getElementById(id)?.addEventListener('click', () => showPage(idx+2)); });
+
+        // 思维导图：预设2个一级分支
+        function addMindmapBranch() {
+            const container = document.getElementById('mindmapContainer');
+            if(!container) return;
+            const div = document.createElement('div'); div.className = 'mindmap-node';
+            div.innerHTML = `<input type="text" class="branchName" placeholder="一级分支名称（如交通区位）" style="width:100%; padding:10px;"><div class="subnode-row"><input type="text" class="subnode1" placeholder="二级节点1" style="flex:1; padding:10px;"><input type="text" class="subnode2" placeholder="二级节点2" style="flex:1; padding:10px;"></div>`;
+            container.appendChild(div);
+        }
+        document.getElementById('addBranchBtn')?.addEventListener('click', addMindmapBranch);
+        for(let i=0;i<2;i++) addMindmapBranch();
+
+        initCustomDrag();
+        showPage(1);
+    }
+    buildAllPages();
+</script>
+</body>
+</html>
